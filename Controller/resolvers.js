@@ -28,6 +28,51 @@ const resolvers = {
                 user    : signInUser
             }
         },
+        todoList : async (_, args, context)=>{
+
+            const todoQuery = {
+                orderBy : [{id : 'desc'}],
+                select  : {
+                    id              : true,
+                    title           : true,
+                    register_date   : true,
+                    update_date     : true,
+                    category        : true,
+                    user            : true
+                    },
+                take    : args['limit'],
+            }
+
+            if (args.fromId) {
+                todoQuery.cursor = {id : args.fromId}
+            }
+            if (args.category) {
+                todoQuery.cursor = {category : args.category}
+            }
+
+            const todoList = await prisma.todo.findMany(todoQuery)
+
+            return {
+                status : 'ok',
+                todoList : todoList
+            }
+        },
+        todo : async(_, args, context)=>{
+            var message
+            
+            if (args.userId) {
+                var inquiryTodo = await prisma.todo.findMany({
+                    where : {register_user : args.userId}
+                })
+            }
+            if (args.todoId) {
+                var inquiryTodo = [await prisma.todo.findUnique({
+                    where   : {id : args.todoId},
+                })]
+            }
+            
+            return inquiryTodo
+        }
     },
     Mutation: {
         userUpdate : async (_, args, context)=>{
@@ -51,6 +96,7 @@ const resolvers = {
                 .create({
                     data : {
                         name : args.userInformation.name,
+                        mail : args.userInformation.mail,
                         password : crypto.createHmac('sha256', secret).update(args.userInformation.password).digest('hex'),
                         level : 1
                     }
@@ -62,6 +108,26 @@ const resolvers = {
                 user : user
             }
         },
+        newPost : async (_, args, context)=>{
+            const inputPost = args.post
+            console.log('post', inputPost)
+            
+            const post = await prisma.todo
+                .create({
+                    data : {
+                        title : inputPost.title,
+                        article : inputPost.article,
+                        register_user : inputPost.register_user,
+                        register_date : new Date().toISOString(),
+                        category : inputPost.category
+                    }
+                })
+            return {
+                status : 'ok',
+                post : post,
+                register_date : new Date().toISOString(),
+            }
+        }
     }
 };
 

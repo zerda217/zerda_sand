@@ -12,22 +12,46 @@ const typeDefs = gql`
 	type User {
 		id 				: Int
 		name 			: String!
+		mail			: String
 		password 	: String!
 		level 		: Int
 	}
 
 	input UserInput {
 		name 			: String!
+		mail			: String
 		password 	: String!
+	}
+
+	type Todo {
+		id 							: Int
+		title 					: String
+		article 				: String
+		register_user		: Int
+		register_date 	: String
+		update_date 		: String
+		category 				: String
+	}
+
+	input TodoInput {
+		title 				: String
+		article 			: String
+		register_user	: Int
+		category 			: String
 	}
 
 	type Query {
 		signIn(name:String!, password:String!) 			: JSON
+		todoList(limit:Int = 10, fromId:Int, category:String) 		: JSON
+		# todo(todoId:Int, userId:Int)	: JSON
+		todo(todoId:Int, userId:Int)	: [Todo]
+
 	}
 
 	type Mutation {
 		userUpdate(userInformation : UserInput, userId:Int) : JSON
 		signUp(userInformation : UserInput) 	: JSON
+		newPost(post : TodoInput)				: JSON
 	}
 `;
 

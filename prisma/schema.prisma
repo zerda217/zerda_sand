@@ -14,4 +14,17 @@ model user {
   level         Int?
   register_date DateTime? @default(now()) @db.Date
   update_date   DateTime? @default(now()) @db.Date
+  mail          String?
+  todo          todo[]
+}
+
+model todo {
+  id            Int       @id(map: "todo_pk") @unique(map: "todo_id_uindex") @default(autoincrement())
+  title         String?
+  article       String?
+  register_user Int?
+  register_date DateTime? @default(now()) @db.Date
+  update_date   DateTime? @default(now()) @db.Date
+  category      String?
+  user          user?     @relation(fields: [register_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "todo_user_id_fk")
 }
