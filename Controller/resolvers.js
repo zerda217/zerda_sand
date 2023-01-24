@@ -84,7 +84,7 @@ const resolvers = {
         }
     },
     Mutation: {
-        userUpdate : async (_, args, context)=>{
+        userUpdate : async (_, args, context) => {
             const user = await prisma.user.findUnique({
                 where : { id : args.userId}
             })
@@ -99,7 +99,7 @@ const resolvers = {
 
             return userUpdate
         },
-        signUp : async (_, args, context) =>{
+        signUp : async (_, args, context) => {
             const user = await prisma
                 .user
                 .create({
@@ -117,7 +117,7 @@ const resolvers = {
                 user : user
             }
         },
-        newPost : async (_, args, context)=>{
+        newPost : async (_, args, context) => {
             const inputPost = args.post
             console.log('post', inputPost)
             
@@ -136,6 +136,20 @@ const resolvers = {
                 post : post,
                 register_date : new Date().toISOString(),
             }
+        },
+        updatePost : async (_, args, context) => {
+            const updatePost = await prisma.todo.update({
+                    where   : {
+                        id : args['id']
+                    },
+                    data    : {
+                        title       : args['title'],
+                        complete    : args['complete'],
+                        update_date : new Date()
+                    }
+                });
+            console.log(updatePost)
+            return updatePost
         }
     }
 };

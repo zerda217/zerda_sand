@@ -44,15 +44,14 @@ const typeDefs = gql`
 	type Query {
 		signIn(name:String!, password:String!) 			: JSON
 		todoList(limit:Int = 10, fromId:Int, category:String) 		: JSON
-		# todo(todoId:Int, userId:Int)	: JSON
 		todo(todoId:Int, userId:Int, complete:Boolean)	: [Todo]
-
 	}
 
 	type Mutation {
-		userUpdate(userInformation : UserInput, userId:Int) : JSON
+		userUpdate(userInformation : UserInput, userId:Int!) : JSON
 		signUp(userInformation : UserInput) 	: JSON
 		newPost(post : TodoInput)				: JSON
+		updatePost(id:Int!, title:String!, complete:Boolean = false)		: JSON
 	}
 `;
 
