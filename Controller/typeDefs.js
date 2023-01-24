@@ -31,6 +31,7 @@ const typeDefs = gql`
 		register_date 	: String
 		update_date 		: String
 		category 				: String
+		complete				: Boolean
 	}
 
 	input TodoInput {
@@ -44,7 +45,7 @@ const typeDefs = gql`
 		signIn(name:String!, password:String!) 			: JSON
 		todoList(limit:Int = 10, fromId:Int, category:String) 		: JSON
 		# todo(todoId:Int, userId:Int)	: JSON
-		todo(todoId:Int, userId:Int)	: [Todo]
+		todo(todoId:Int, userId:Int, complete:Boolean)	: [Todo]
 
 	}
 

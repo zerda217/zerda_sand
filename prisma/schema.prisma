@@ -26,5 +26,6 @@ model todo {
   register_date DateTime? @default(now()) @db.Date
   update_date   DateTime? @default(now()) @db.Date
   category      String?
+  complete      Boolean?  @default(false)
   user          user?     @relation(fields: [register_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "todo_user_id_fk")
 }
