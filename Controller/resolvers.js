@@ -2,21 +2,24 @@ import pkg from '@prisma/client';
 const { PrismaClient, Prisma } = pkg;
 const prisma = new PrismaClient();
 import crypto from 'crypto';
+import jsonwebtoken from 'jsonwebtoken'
 const secret = process.env.SECRET_KEY;
+const jwtSecret = process.env.JWT_SECRET
 import moment from 'moment';
 
 const resolvers = {
     Query: {
         signIn : async (_, args, context) => {
             var message
+            let token
             const signInUser = await prisma.user.findFirst({
                 where : {
                     name : args.name,
                     password : crypto.createHmac('sha256', secret).update(args.password).digest('hex'),
-
                 }})
             if (signInUser) {
                 message = `로그인 성공`
+                token = jsonwebtoken.sign({asdas:'asoida'}, jwtSecret, { expiresIn: '7d' })
             } else {
                 message = `가입된 회원이 아닙니다`
             }
@@ -24,8 +27,8 @@ const resolvers = {
             return {
                 status  : 'ok',
                 message : message,
-                args    : args,
-                user    : signInUser
+                user    : {name: signInUser.name, id: signInUser.id},
+                token   : token
             }
         },
         todoList : async (_, args, context)=>{
@@ -38,7 +41,8 @@ const resolvers = {
                     register_date   : true,
                     update_date     : true,
                     category        : true,
-                    user            : true
+                    user            : true,
+                    complete        : true,
                     },
                 take    : args['limit'],
             }
@@ -63,6 +67,11 @@ const resolvers = {
             if (args.userId) {
                 var inquiryTodo = await prisma.todo.findMany({
                     where : {register_user : args.userId}
+                })
+            }
+            if (args.complete) {
+                var inquiryTodo = await prisma.todo.findMany({
+                    where : {complete : args.complete}
                 })
             }
             if (args.todoId) {
